@@ -1,0 +1,5 @@
+https://geojson.io/
+https://www.latlong.net/
+https://www.sqlalchemy.org/
+https://python-visualization.github.io/folium/latest/getting_started.html
+https://github.com/johan/world.geo.json/tree/master/countries/USA - for json geographic polygon

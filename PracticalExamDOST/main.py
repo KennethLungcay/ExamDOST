@@ -25,6 +25,7 @@ def main():
     elif page == "Admin":
         display_page_1()
 
+  
 def display_home_page():
 
     st.title("Geometry of the USA with Streamlit and Folium Data Reference Only")
@@ -99,6 +100,13 @@ def display_home_page():
             return 'red'
 
     st.title("GeoJSON Data Visualization Dynamic Feature")
+    st.markdown("""
+        <div style="color: green;"><b>20 and above</b></div>
+        <div style="color: orange;"><b>10 - 20</b></div>
+        <div style="color: red;"><b>Less than 10</b></div>
+         """,unsafe_allow_html=True
+         )
+
     map_folium = folium.Map(location=[37.090240,-95.712891], zoom_start=4)
     folium.GeoJson(
         geojson_str, 
@@ -124,25 +132,55 @@ def display_page_1():
     query = "SELECT id, name, type, population,geometry_type FROM states"
     data = db.execute_query(query)
     st.table(data)
+
+    
+ 
+
     st.subheader("CRUD Operations")
 
-
-
     # INSERT OPERATION
-    st.write("### Create Operation")
-    new_id = st.text_input("ID")
-    new_name = st.text_input("Name")
-    new_type = st.text_input("Type")
-    new_geometry_type = st.text_input("eometry Type")
-    new_population = st.number_input("Population",step=1)
-    new_coordinates = st.text_area("Coordinates")
+    # st.write("### Create Operation")
+    # st.markdown("<span style='color:blue'><b>GetData sample from us-states.json in the same directory as main.py</b></span>", unsafe_allow_html=True)
 
-    if st.button("Add New Record"):
+    # new_id = st.text_input("ID")
+    # new_name = st.text_input("Name")
+    # new_type = st.text_input("Type")
+    # new_geometry_type = st.text_input("eometry Type")
+    # new_population = st.number_input("Population",step=1)
+    # new_coordinates = st.text_area("Coordinates")
+
+
+    # if st.button("Add New Record"):
+    #     try:
+    #         db.execute_insert('states',id=new_id.upper(), name=new_name, type=new_type, geometry_type=new_geometry_type,population=new_population, coordinates=new_coordinates)
+    #         st.success("New record added successfully!")
+    #     except Exception as e:
+    #         st.error(f"Error adding new record: {e}")
+
+    st.write("### Create Operation")
+    st.markdown("<span style='color:blue'><b>GetData sample from us-states.json in the same directory as main.py</b></span>", unsafe_allow_html=True)
+
+    # Start a form block
+    with st.form(key='my_form'):
+        new_id = st.text_input("ID")
+        new_name = st.text_input("Name")
+        new_type = st.text_input("Type")
+        new_geometry_type = st.text_input("Geometry Type")
+        new_population = st.number_input("Population",step=1)
+        new_coordinates = st.text_area("Coordinates")
+
+        # Create a submit button in the form
+        submit_button = st.form_submit_button(label='Add New Record')
+
+    # Check if the form is submitted
+    if submit_button:
         try:
             db.execute_insert('states',id=new_id.upper(), name=new_name, type=new_type, geometry_type=new_geometry_type,population=new_population, coordinates=new_coordinates)
             st.success("New record added successfully!")
+            st.experimental_rerun()
         except Exception as e:
             st.error(f"Error adding new record: {e}")
+
 
 
 
@@ -160,28 +198,39 @@ def display_page_1():
 
 
     st.write("### Update Operation")
+    st.markdown("<span style='color:blue'><b>Type the ID and Press Enter to fetch data EX: AZ </b></span>", unsafe_allow_html=True)
     updated_id = st.text_input("Update ID")
 
     # Fetch data when the ID is updated
     if updated_id:
         data = fetch_data(updated_id)
         if data:
-            updated_name = st.text_input("New Name", value=data['name'])
-            updated_type = st.text_input("New Type", value=data['type'])
-            updated_geometry_type = st.text_input("New Geometry Type", value=data['geometry_type'])
-            updated_population = st.text_input("Population Count Update", value=data['population'])
-            updated_coordinate = st.text_area("New Coordinates", value=data['coordinates'])
+            # Start a form block
+            with st.form(key='update_form'):
+                updated_name = st.text_input("New Name", value=data['name'])
+                updated_type = st.text_input("New Type", value=data['type'])
+                updated_geometry_type = st.text_input("New Geometry Type", value=data['geometry_type'])
+                updated_population = st.text_input("Population Count Update", value=data['population'])
+                updated_coordinate = st.text_area("New Coordinates", value=data['coordinates'])
+
+                # Create a submit button in the form
+                submit_button = st.form_submit_button(label='Update Record')
         else:
             st.write("No data found for the given ID.")
     else:
-        updated_name = st.text_input("New Name")
-        updated_type = st.text_input("New Type")
-        updated_geometry_type = st.text_input("New Geometry Type")
-        updated_population =  st.text_input("Population Count Update")
-        updated_coordinate = st.text_area("New Coordinates")
+        # Start a form block
+        with st.form(key='update_form'):
+            updated_name = st.text_input("New Name")
+            updated_type = st.text_input("New Type")
+            updated_geometry_type = st.text_input("New Geometry Type")
+            updated_population =  st.text_input("Population Count Update")
+            updated_coordinate = st.text_area("New Coordinates")
 
-    # Update button
-    if st.button("Update Record"):
+            # Create a submit button in the form
+            submit_button = st.form_submit_button(label='Update Record')
+
+    # Check if the form is submitted
+    if submit_button:
         try:
             update_values = {
                 'name': updated_name,
@@ -195,10 +244,12 @@ def display_page_1():
         except Exception as e:
             st.error(f"Error updating record: {e}")
 
+
    
    
     #DELETE OPERATION
     st.write("### Delete Operation")
+    st.markdown("<span style='color:blue'><b>Type the ID EX: AZ Then Click Delete</b></span>", unsafe_allow_html=True)
     delete_id = st.text_input("ID to delete")
     if st.button('Delete'):
         rows_deleted = db.delete_data(delete_id)
