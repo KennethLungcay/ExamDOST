@@ -34,6 +34,12 @@ Run the Apache Server for the Database:
     port: The port number for your database server.
     host: The hostname or IP address of your database server.
     db_name: The name of your database.
+    to this variable:
+    db = MySQLDatabase(username="kenneth",
+                    password="password",
+                    hostname="localhost",
+                    port="3306", 
+                    database_name="examdostDB")
 
 Run the Main Application:
 
